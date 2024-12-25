@@ -1,0 +1,14 @@
+{
+  "name": "clevertap-api",
+  "version": "1.0.0",
+  "description": "Clevertap apis",
+  "main": "index.js",
+  "repository": "https://github.com/eclipse-tech/clevertap-api.git",
+  "author": "Minkesh Jain <minkesh@pidilite.vc>",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
