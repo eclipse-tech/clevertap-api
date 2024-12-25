@@ -1,0 +1,7 @@
+POST http://localhost:3000/get-user-profile
+Content-Type: application/json
+
+{
+  "identity": "+918880522285",
+  "filterEvents": ["app_opened"]
+}
