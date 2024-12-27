@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Clevertap apis",
   "main": "index.js",
+  "type": "module",
   "repository": "https://github.com/eclipse-tech/clevertap-api.git",
   "author": "Minkesh Jain <minkesh@pidilite.vc>",
   "license": "MIT",
