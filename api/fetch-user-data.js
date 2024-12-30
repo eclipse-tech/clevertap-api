@@ -1,26 +1,14 @@
-import dotenv from "dotenv";
-
 import axios from "axios";
-
-dotenv.config();
-
-const headers = {
-  "X-CleverTap-Account-Id": process.env.ACCOUNT_ID,
-  "X-CleverTap-Passcode": process.env.PASSCODE,
-  "Content-Type": "application/json",
-};
+import { apiHeaders, BASE_URL } from "./constants.js";
 
 const fetchUserData = async (identity, filterEvents) => {
   try {
-    const { data } = await axios.get(
-      "https://api.clevertap.com/1/profile.json",
-      {
-        headers: headers,
-        params: {
-          identity: identity,
-        },
-      }
-    );
+    const { data } = await axios.get(`${BASE_URL}/1/profile.json`, {
+      headers: apiHeaders,
+      params: {
+        identity: identity,
+      },
+    });
 
     const { platformInfo, name, profileData, events } = data.record;
 
