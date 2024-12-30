@@ -1,4 +1,4 @@
-POST https://clevertap-jade.vercel.app/get-user-profile
+POST http://localhost:3000/api/v1/get-user-profile
 Content-Type: application/json
 
 {

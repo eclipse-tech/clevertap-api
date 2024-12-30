@@ -1,0 +1,28 @@
+### Upload event with valid data
+POST http://localhost:3000/api/v1/upload-event
+Content-Type: application/json
+
+{
+  "identity": "918880522285",
+  "eventName": "dp_customer_initiated_call",
+  "eventData": {}
+}
+
+### Upload event with missing identity
+POST /api/v1/upload-event HTTP/1.1
+Content-Type: application/json
+
+{
+  "eventName": "test_event",
+  "eventData": "test_data"
+}
+
+### Upload event with invalid event name
+POST /api/v1/upload-event HTTP/1.1
+Content-Type: application/json
+
+{
+  "identity": "test_identity",
+  "eventName": "",
+  "eventData": "test_data"
+}
