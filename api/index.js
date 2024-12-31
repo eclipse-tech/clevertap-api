@@ -5,7 +5,7 @@ import uploadEvent from "./upload-user-event.js";
 
 // List of allowed origins
 const allowedOrigins = [
-  "https://letsmultiply.co.in",
+  "https://www.letsmultiply.co.in",
   "https://stage.letsmultiply.co.in",
   "https://dev.letsmultiply.co.in",
   "http://localhost:3000",
