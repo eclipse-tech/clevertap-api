@@ -11,10 +11,10 @@ const uploadEvent = async (identity, eventName, eventData) => {
       }
     );
     console.log(res.data);
-    if (res.data.status !== "success") {
-      throw new Error(res.data.error);
+    if (res.data?.status !== "success") {
+      throw new Error(res.data?.error);
     }
-    return res.data.data;
+    return res.data;
   } catch (error) {
     console.log("Error while uploading event", error);
     return error;

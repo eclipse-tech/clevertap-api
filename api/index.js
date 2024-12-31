@@ -47,8 +47,8 @@ app.post("/api/v1/get-user-profile", async (req, res) => {
 app.post("/api/v1/upload-event", async (req, res) => {
   const { identity, eventName, eventData } = req.body;
   try {
-    const res = await uploadEvent(identity, eventName, eventData);
-    res.send(res);
+    const uploadData = await uploadEvent(identity, eventName, eventData);
+    res.send(uploadData);
   } catch (error) {
     res.status(500).send(error);
   }
