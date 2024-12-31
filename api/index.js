@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import fetchUserData from "./fetch-user-data.js";
 import uploadEvent from "./upload-user-event.js";
 
