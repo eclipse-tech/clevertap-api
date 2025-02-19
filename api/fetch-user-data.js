@@ -10,13 +10,18 @@ const fetchUserData = async (identity, filterEvents) => {
       },
     });
 
+    if (!data.record) {
+      throw new Error("No data found");
+    }
+
     const { platformInfo, name, profileData, events } = data.record;
+    console.log("🚀 ~ fetchUserData ~  data.record;:", data.record);
 
     const sortedPlatformInfo = platformInfo.sort((a, b) => b.ls - a.ls);
     const latestPlatformInfo = sortedPlatformInfo[0];
 
     const filteredEvents = {};
-    filterEvents.forEach((eventName) => {
+    filterEvents?.forEach((eventName) => {
       if (events[eventName]) {
         filteredEvents[eventName] = events[eventName];
       }
@@ -30,7 +35,7 @@ const fetchUserData = async (identity, filterEvents) => {
     };
   } catch (error) {
     console.error(error);
-    return null;
+    throw new Error(error);
   }
 };
 

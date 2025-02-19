@@ -1,7 +1,6 @@
-// api/constants.js
 export const apiHeaders = {
-  "X-CleverTap-Account-Id": process.env.ACCOUNT_ID,
-  "X-CleverTap-Passcode": process.env.PASSCODE,
+  "X-CleverTap-Account-Id": "658-K78-4W7Z",
+  "X-CleverTap-Passcode": "WTE-RMW-ASEL",
   "Content-Type": "application/json",
 };
 
