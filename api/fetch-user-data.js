@@ -15,8 +15,6 @@ const fetchUserData = async (identity, filterEvents) => {
     }
 
     const { platformInfo, name, profileData, events } = data.record;
-    console.log("🚀 ~ fetchUserData ~  data.record;:", data.record);
-
     const sortedPlatformInfo = platformInfo.sort((a, b) => b.ls - a.ls);
     const latestPlatformInfo = sortedPlatformInfo[0];
 
@@ -30,7 +28,8 @@ const fetchUserData = async (identity, filterEvents) => {
     return {
       name,
       profileData,
-      platformInfo: latestPlatformInfo,
+      latestPlatformInfo,
+      platformInfo,
       events: filteredEvents,
     };
   } catch (error) {
