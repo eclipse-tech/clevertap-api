@@ -362,27 +362,8 @@ export const generateDailyReport = async () => {
 
       // Add Metabase dashboard data if available
       if (metabaseData) {
-        message.blocks.push(
-          {
-            type: "section",
-            text: {
-              type: "mrkdwn",
-              text: `📊 *Metabase Dashboard:*\n<${process.env.METABASE_DASHBOARD_URL}|View Full Dashboard>`
-            }
-          }
-        );
-
-        metabaseData.cards.forEach(card => {
-          if (card.data && card.data.data) {
-            message.blocks.push({
-              type: "section",
-              text: {
-                type: "mrkdwn",
-                text: metabaseClient.formatCardData(card)
-              }
-            });
-          }
-        });
+        const metabaseMessage = metabaseClient.formatDashboardMessage(metabaseData);
+        message.blocks.push(...metabaseMessage.blocks);
       } else {
         message.blocks.push({
           type: "section",
