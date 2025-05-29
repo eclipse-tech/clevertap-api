@@ -50,7 +50,7 @@ export const generateDailyReport = async () => {
     try {
       // Get total app opens for the month (non-unique, no filters)
       const monthTotalAppOpensRequestBody = {
-        event_name: "App Launched",
+        event_name: "app_opened",
         from: monthStartDate,
         to: toDate,
         unique: false
@@ -93,7 +93,7 @@ export const generateDailyReport = async () => {
 
       // Step 1: Get yesterday's counts
       const yesterdayRequestBody = {
-        event_name: "App Launched",
+        event_name: "app_opened",
         from: fromDate,
         to: toDate,
         unique: true,
@@ -196,7 +196,7 @@ export const generateDailyReport = async () => {
 
         // Step 2: Get month-to-date counts
         const monthToDateRequestBody = {
-          event_name: "App Launched",
+          event_name: "app_opened",
           from: monthStartDate,
           to: toDate,
           unique: true,
@@ -334,7 +334,7 @@ export const generateDailyReport = async () => {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: `📅 *Yesterday's App Opens (${new Date(yesterday).toLocaleDateString()}):*\n• **Unique Users:** ${yesterdayUniqueUsers.toLocaleString()}\n• **Total Events:** ${yesterdayTotalEvents.toLocaleString()}\n• **Event:** App Launched\n• **Filter:** Excluding Internal Users`
+              text: `📅 *Yesterday's App Opens* (${new Date(yesterday).toLocaleDateString()})\n• Unique Users: *${yesterdayUniqueUsers.toLocaleString()}*\n• Total Events: *${yesterdayTotalEvents.toLocaleString()}*\n• Event: \`app_opened\`\n• Filter: Excluding Internal Users`
             }
           },
           {
@@ -344,7 +344,7 @@ export const generateDailyReport = async () => {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: `📈 *Month-to-Date App Opens (${new Date(monthStart).toLocaleDateString()} to ${new Date(yesterday).toLocaleDateString()}):*\n• **Unique Users:** ${monthToDateUniqueUsers.toLocaleString()}\n• **Total Events:** ${monthToDateTotalEvents.toLocaleString()}\n• **Total App Opens (All Users):** ${monthTotalAppOpens.toLocaleString()}\n• **Days into Month:** ${Math.ceil((yesterday - monthStart) / (1000 * 60 * 60 * 24))}\n• **Avg Daily Unique Users:** ${Math.round(monthToDateUniqueUsers / Math.ceil((yesterday - monthStart) / (1000 * 60 * 60 * 24))).toLocaleString()}\n• **Avg Daily Events:** ${Math.round(monthToDateTotalEvents / Math.ceil((yesterday - monthStart) / (1000 * 60 * 60 * 24))).toLocaleString()}\n• **Event:** App Launched\n• **Filter:** Excluding Internal Users`
+              text: `📈 *Month-to-Date App Opens* (${new Date(monthStart).toLocaleDateString()} to ${new Date(yesterday).toLocaleDateString()})\n• Unique Users: *${monthToDateUniqueUsers.toLocaleString()}*\n• Total Events: *${monthToDateTotalEvents.toLocaleString()}*\n• Total App Opens (All Users): *${monthTotalAppOpens.toLocaleString()}*\n• Days into Month: *${Math.ceil((yesterday - monthStart) / (1000 * 60 * 60 * 24))}*\n• Avg Daily Unique Users: *${Math.round(monthToDateUniqueUsers / Math.ceil((yesterday - monthStart) / (1000 * 60 * 60 * 24))).toLocaleString()}*\n• Avg Daily Events: *${Math.round(monthToDateTotalEvents / Math.ceil((yesterday - monthStart) / (1000 * 60 * 60 * 24))).toLocaleString()}*\n• Event: \`app_opened\`\n• Filter: Excluding Internal Users`
             }
           },
           {
@@ -354,7 +354,7 @@ export const generateDailyReport = async () => {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: `📊 *Performance Indicators:*\n🟢 *Yesterday vs Avg:* ${((yesterdayUniqueUsers / (monthToDateUniqueUsers / Math.ceil((yesterday - monthStart) / (1000 * 60 * 60 * 24)))) * 100 - 100).toFixed(1)}%`
+              text: `📊 *Performance Indicators*\n🟢 Yesterday vs Avg: *${((yesterdayUniqueUsers / (monthToDateUniqueUsers / Math.ceil((yesterday - monthStart) / (1000 * 60 * 60 * 24)))) * 100 - 100).toFixed(1)}%*`
             }
           }
         ]
@@ -369,7 +369,7 @@ export const generateDailyReport = async () => {
           type: "section",
           text: {
             type: "mrkdwn",
-            text: "📊 *Metabase Dashboard:* Unable to fetch data"
+            text: "📊 Metabase Dashboard\nUnable to fetch data"
           }
         });
       }
