@@ -39,7 +39,8 @@ app.get("/api/v1/debug-config", (_, res) => {
   res.json({
     accountId: process.env.ACCOUNT_ID ? `${process.env.ACCOUNT_ID.substring(0, 4)}...${process.env.ACCOUNT_ID.substring(8)}` : 'not set',
     hasPasscode: !!process.env.PASSCODE,
-    hasSlackWebhook: !!process.env.SLACK_WEBHOOK_URL,
+    hasSlackBot: !!process.env.SLACK_BOT_TOKEN,
+    hasSlackChannels: !!process.env.SLACK_CHANNEL_IDS,
     headers: {
       ...apiHeaders,
       "X-CleverTap-Passcode": "***" // Hide the actual passcode
