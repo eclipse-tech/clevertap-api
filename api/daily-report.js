@@ -344,7 +344,7 @@ export const generateDailyReport = async () => {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: `📈 *Month-to-Date App Opens* (${new Date(monthStart).toLocaleDateString()} to ${new Date(yesterday).toLocaleDateString()})\n• Unique Users: *${monthToDateUniqueUsers.toLocaleString()}*\n• Total Events: *${monthToDateTotalEvents.toLocaleString()}*\n• Total App Opens (All Users): *${monthTotalAppOpens.toLocaleString()}*\n• Days into Month: *${Math.ceil((yesterday - monthStart) / (1000 * 60 * 60 * 24))}*\n• Avg Daily Unique Users: *${Math.round(monthToDateUniqueUsers / Math.ceil((yesterday - monthStart) / (1000 * 60 * 60 * 24))).toLocaleString()}*\n• Avg Daily Events: *${Math.round(monthToDateTotalEvents / Math.ceil((yesterday - monthStart) / (1000 * 60 * 60 * 24))).toLocaleString()}*\n• Event: \`app_opened\`\n• Filter: Excluding Internal Users`
+              text: `📈 *Month-to-Date App Opens* (${new Date(monthStart).toLocaleDateString()} to ${new Date(yesterday).toLocaleDateString()})\n• Unique Users: *${monthToDateUniqueUsers.toLocaleString()}*\n• Total Events: *${monthToDateTotalEvents.toLocaleString()}*\n• Total App Opens (All Users): *${monthTotalAppOpens.toLocaleString()}*\n• Days into Month: *${Math.ceil((yesterday - monthStart) / (1000 * 60 * 60 * 24)) + 1}*\n• Avg Daily Unique Users: *${Math.round(monthToDateUniqueUsers / (Math.ceil((yesterday - monthStart) / (1000 * 60 * 60 * 24)) + 1)).toLocaleString()}*\n• Avg Daily Events: *${Math.round(monthToDateTotalEvents / (Math.ceil((yesterday - monthStart) / (1000 * 60 * 60 * 24)) + 1)).toLocaleString()}*\n• Event: \`app_opened\`\n• Filter: Excluding Internal Users`
             }
           },
           {
