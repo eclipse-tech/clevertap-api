@@ -481,6 +481,74 @@ const metabaseClient = {
       console.error('Error preparing pulse alert:', error.message);
       return null;
     }
+  },
+
+  async getDashboard() {
+    try {
+      console.log('Checking Metabase configuration...');
+      console.log('METABASE_API_URL:', process.env.METABASE_API_URL ? 'Set' : 'Not set');
+      console.log('METABASE_API_KEY:', process.env.METABASE_API_KEY ? 'Set' : 'Not set');
+      console.log('METABASE_DASHBOARD_URL:', process.env.METABASE_DASHBOARD_URL ? 'Set' : 'Not set');
+
+      if (!process.env.METABASE_API_URL || !process.env.METABASE_API_KEY || !process.env.METABASE_DASHBOARD_URL) {
+        console.error('Missing required Metabase configuration');
+        return null;
+      }
+
+      let apiUrl = process.env.METABASE_API_URL;
+      apiUrl = apiUrl.replace(/\/$/, '');
+      if (!apiUrl.includes('/api')) {
+        apiUrl = `${apiUrl}/api`;
+      }
+
+      const dashboardUrl = process.env.METABASE_DASHBOARD_URL;
+      let dashboardId;
+      
+      if (dashboardUrl.includes('/dashboard/')) {
+        const urlParts = dashboardUrl.split('/dashboard/')[1];
+        dashboardId = urlParts.split('-')[0];
+      } else {
+        dashboardId = dashboardUrl.split('/').pop().split('-')[0];
+      }
+
+      console.log('Using API URL:', apiUrl);
+      console.log('Extracted dashboard ID:', dashboardId);
+
+      const headers = {
+        'x-api-key': process.env.METABASE_API_KEY,
+        'Content-Type': 'application/json',
+        'User-Agent': 'MetabaseClient/1.0'
+      };
+
+      try {
+        const dashboardResponse = await axios.get(`${apiUrl}/dashboard/${dashboardId}`, {
+          headers: headers,
+          timeout: 20000
+        });
+
+        const dashboard = dashboardResponse.data;
+        console.log('Dashboard name:', dashboard.name);
+
+        return {
+          id: dashboard.id,
+          name: dashboard.name,
+          description: dashboard.description || '',
+          url: process.env.METABASE_DASHBOARD_URL,
+          cards: dashboard.ordered_cards || dashboard.dashcards || dashboard.cards || []
+        };
+
+      } catch (dashboardError) {
+        console.error('Dashboard fetch failed:', dashboardError.message);
+        if (dashboardError.response?.status === 403) {
+          console.error('403 Forbidden - Check API key permissions');
+        }
+        return null;
+      }
+
+    } catch (error) {
+      console.error('Error in getDashboard:', error.message);
+      return null;
+    }
   }
 };
 

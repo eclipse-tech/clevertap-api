@@ -3,7 +3,7 @@ import cors from "cors";
 import cron from 'node-cron';
 import fetchUserData from "./fetch-user-data.js";
 import uploadEvent from "./upload-user-event.js";
-import getDailyAppOpenedEvents from "./daily-report.js";
+import { generateDailyReport } from "./daily-report-generator/daily-report.js";
 import { apiHeaders } from "./constants.js";
 
 // List of allowed origins
@@ -51,17 +51,42 @@ app.get("/api/v1/debug-config", (_, res) => {
 // Schedule the daily report to run at midnight
 cron.schedule('0 0 * * *', async () => {
   console.log('Running daily app opened events report...');
-  await getDailyAppOpenedEvents();
+  await generateDailyReport();
 });
 
-// Test endpoint to manually trigger the report
-app.get("/api/v1/test-daily-report", async (_, res) => {
+// Daily report generator endpoint
+app.get("/api/daily-report-generator", async (_, res) => {
   try {
     console.log('Manually triggering daily report...');
-    const result = await getDailyAppOpenedEvents();
-    res.send({ success: result, message: 'Report generation triggered' });
+    const result = await generateDailyReport();
+    
+    if (!result.success) {
+      console.error('Daily report generation failed:', result.error);
+      return res.status(500).json({ 
+        success: false, 
+        error: result.error,
+        message: 'Report generation failed'
+      });
+    }
+
+    res.status(200).json({ 
+      success: true,
+      result, 
+      message: 'Report generation triggered' 
+    });
   } catch (error) {
-    res.status(500).send({ error: error.message });
+    console.error('Error in daily report handler:', {
+      message: error.message,
+      stack: error.stack,
+      response: error.response?.data,
+      status: error.response?.status
+    });
+    
+    res.status(500).json({ 
+      success: false,
+      error: error.message,
+      details: error.response?.data || 'No additional details available'
+    });
   }
 });
 
