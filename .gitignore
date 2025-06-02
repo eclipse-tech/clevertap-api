@@ -1,6 +1,6 @@
-.vercel
+.verce
+.env
 node_modules/
 .env*.local
 .env.local
-.env
 .env.backup
