@@ -1,4 +1,6 @@
-.vercel
-node_modules/
+.verce
 .env
+node_modules/
 .env*.local
+.env.local
+.env.backup

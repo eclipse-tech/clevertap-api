@@ -1,0 +1,3 @@
+### Test Daily Report Generation
+GET http://localhost:3000/api/v1/test-daily-report 
+Content-Type: application/json
