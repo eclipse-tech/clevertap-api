@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Validate required environment variables
-const requiredEnvVars = ['ACCOUNT_ID', 'PASSCODE', 'SLACK_WEBHOOK_URL'];
+const requiredEnvVars = ['ACCOUNT_ID', 'PASSCODE', 'SLACK_BOT_TOKEN', 'SLACK_CHANNEL_IDS'];
 const optionalEnvVars = ['METABASE_API_URL', 'METABASE_API_KEY', 'METABASE_DASHBOARD_URL'];
 const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
 
@@ -37,7 +37,8 @@ const startServer = async () => {
       console.log('Environment variables loaded:', {
         ACCOUNT_ID: `${process.env.ACCOUNT_ID.substring(0, 4)}...${process.env.ACCOUNT_ID.substring(8)}`,
         hasPasscode: !!process.env.PASSCODE,
-        hasSlackWebhook: !!process.env.SLACK_WEBHOOK_URL
+        hasSlackBot: !!process.env.SLACK_BOT_TOKEN,
+        hasSlackChannels: !!process.env.SLACK_CHANNEL_IDS
       });
     });
 
