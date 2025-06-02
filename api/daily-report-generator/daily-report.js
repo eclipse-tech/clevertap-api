@@ -5,11 +5,20 @@ import metabaseClient from '../metabase-client.js';
 
 // Validate CleverTap configuration
 function validateCleverTapConfig() {
-  if (!process.env.ACCOUNT_ID || process.env.ACCOUNT_ID.length !== 12) {
+  const missingVars = [];
+  
+  if (!process.env.ACCOUNT_ID) {
+    missingVars.push('ACCOUNT_ID');
+  } else if (process.env.ACCOUNT_ID.length !== 12) {
     throw new Error('Invalid ACCOUNT_ID: Must be 12 digits');
   }
+  
   if (!process.env.PASSCODE) {
-    throw new Error('Missing PASSCODE');
+    missingVars.push('PASSCODE');
+  }
+
+  if (missingVars.length > 0) {
+    throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
   }
 }
 
