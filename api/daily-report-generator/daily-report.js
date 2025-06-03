@@ -296,6 +296,9 @@ export async function generateDailyReport() {
       if (metabaseData && metabaseData.cards && metabaseData.cards.length > 0) {
         const categorizedCards = metabaseClient.categorizeCards(metabaseData.cards);
         
+        // Remove Performance Metrics category
+        delete categorizedCards['Performance Metrics'];
+        
         Object.entries(categorizedCards).forEach(([category, cards]) => {
           if (cards.length > 0) {
             message.blocks.push({
