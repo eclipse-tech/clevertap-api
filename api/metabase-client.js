@@ -320,17 +320,17 @@ const metabaseClient = {
     const columns = data.data?.cols || [];
 
     if (rows.length === 0) {
-      return `• **${this.cleanCardTitle(title)}:** No data available`;
+      return `• *${this.cleanCardTitle(title)}:* No data available`;
     }
 
     if (display === 'scalar' || (columns.length === 1 && rows.length === 1)) {
       const value = rows[0][0];
       const formattedValue = typeof value === 'number' ? value.toLocaleString() : value;
-      return `• **${this.cleanCardTitle(title)}:** ${formattedValue}`;
+      return `• *${this.cleanCardTitle(title)}:* ${formattedValue}`;
     }
 
     if (columns.length === 2 && rows.length <= 8) {
-      let result = `• **${this.cleanCardTitle(title)}:**\n`;
+      let result = `• *${this.cleanCardTitle(title)}:*\n`;
       rows.forEach(row => {
         const key = String(row[0]);
         const value = typeof row[1] === 'number' ? row[1].toLocaleString() : row[1];
@@ -340,7 +340,7 @@ const metabaseClient = {
     }
 
     if (rows.length <= 5) {
-      let result = `• **${this.cleanCardTitle(title)}:**\n`;
+      let result = `• *${this.cleanCardTitle(title)}:*\n`;
       rows.forEach(row => {
         const rowText = row.map(cell => 
           cell === null || cell === undefined ? 'N/A' : 
@@ -352,7 +352,7 @@ const metabaseClient = {
     }
 
     const firstValue = rows[0] ? (typeof rows[0][0] === 'number' ? rows[0][0].toLocaleString() : rows[0][0]) : 'N/A';
-    return `• **${this.cleanCardTitle(title)}:** ${rows.length} rows (Latest: ${firstValue})`;
+    return `• *${this.cleanCardTitle(title)}:* ${rows.length} rows (Latest: ${firstValue})`;
   },
 
   // REQUIRED METHOD: formatCardData (legacy compatibility)
