@@ -285,7 +285,7 @@ export async function generateDailyReport() {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `:bar_chart: **App Analytics - Yesterday**\n` +
+          text: `:bar_chart: *App Analytics - Yesterday*\n` +
             `:white_check_mark: ${metabaseData.cards?.length || 0} metrics loaded (direct)\n` +
             `:bar_chart: Success rate: ${metabaseData.cards?.length || 0}/${metabaseData.cards?.length || 0} cards\n` +
             `:clock3: Last updated: ${new Date().toLocaleTimeString()}`
@@ -305,7 +305,7 @@ export async function generateDailyReport() {
               type: "section",
               text: {
                 type: "mrkdwn",
-                text: `${metabaseClient.getCategoryEmojiText(category)} **${category.toUpperCase()}**\n` +
+                text: `${metabaseClient.getCategoryEmojiText(category)} *${category.toUpperCase()}*\n` +
                   cards.map(card => metabaseClient.formatCardAsText(card)).join('\n')
               }
             });
