@@ -1,6 +1,32 @@
 import axios from "axios";
 
 const metabaseClient = {
+  // Helper method: Determine if an error should be retried
+  _shouldRetryError(statusCode, error) {
+    // Never retry client errors (4xx) - they won't succeed on retry
+    if (statusCode >= 400 && statusCode < 500) {
+      return false;
+    }
+
+    // Always retry server errors (5xx) - they might work on retry
+    if (statusCode >= 500) {
+      return true;
+    }
+
+    // Retry rate limiting (429)
+    if (statusCode === 429) {
+      return true;
+    }
+
+    // Retry network errors (no status code means network issue)
+    if (!statusCode && error.code) {
+      return true;
+    }
+
+    // Default: don't retry unknown errors
+    return false;
+  },
+
   // Helper method: Fetch data for a single card with retry logic
   async _fetchSingleCard(cardItem, index, totalCards, apiUrl, headers) {
     try {
@@ -56,11 +82,25 @@ const metabaseClient = {
             console.warn(`Card ${cardId} returned invalid data structure`);
           }
         } catch (cardError) {
+          const statusCode = cardError.response?.status;
+          const isRetryableError = this._shouldRetryError(
+            statusCode,
+            cardError
+          );
+
           retryCount++;
           console.error(
             `Card ${cardId} attempt ${retryCount} failed:`,
-            cardError.message
+            cardError.message,
+            statusCode ? `(HTTP ${statusCode})` : ""
           );
+
+          if (!isRetryableError) {
+            console.error(
+              `Card ${cardId}: Non-retryable error, skipping retries`
+            );
+            break; // Don't retry non-retryable errors
+          }
 
           if (retryCount < maxRetries) {
             const delay = Math.pow(2, retryCount) * 1000;
