@@ -10,6 +10,11 @@
       "destination": "/api/$1"
     }
   ],
+  "functions": {
+    "api/daily-report-generator/daily-report.js": {
+      "maxDuration": 60
+    }
+  },
   "crons": [
     {
       "path": "/api/daily-report-generator",
