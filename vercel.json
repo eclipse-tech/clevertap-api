@@ -11,7 +11,7 @@
     }
   ],
   "functions": {
-    "api/daily-report-cron.js": {
+    "api/daily-report-generator/daily-report.js": {
       "maxDuration": 60
     }
   },
