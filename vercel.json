@@ -12,7 +12,7 @@
   ],
   "crons": [
     {
-      "path": "/api/daily-report-cron",
+      "path": "/api/daily-report-generator",
       "schedule": "0 0 * * *"
     }
   ]
