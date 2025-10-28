@@ -93,7 +93,7 @@ const metabaseClient = {
 
               let cardData = null;
               let retryCount = 0;
-              const maxRetries = 1;
+              const maxRetries = 2;
 
               while (retryCount < maxRetries && !cardData) {
                 try {
@@ -132,14 +132,6 @@ const metabaseClient = {
                     );
                   }
                 } catch (cardError) {
-                  // If the card was deleted or not found, skip retries
-                  if (cardError?.response?.status === 404) {
-                    console.warn(
-                      `Card ${cardId} returned 404 (not found). Skipping without retry.`
-                    );
-                    break; // exit retry loop, leave cardData as null
-                  }
-
                   retryCount++;
                   console.error(
                     `Card ${cardId} attempt ${retryCount} failed:`,
@@ -158,7 +150,7 @@ const metabaseClient = {
                 cardsData.push(cardData);
               } else {
                 console.error(
-                  `Failed to fetch card ${cardId} after ${retryCount} attempts`
+                  `Failed to fetch card ${cardId} after ${maxRetries} attempts`
                 );
               }
 
