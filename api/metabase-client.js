@@ -1,6 +1,149 @@
 import axios from "axios";
 
 const metabaseClient = {
+  // Helper method: Fetch data for a single card with retry logic
+  async _fetchSingleCard(cardItem, index, totalCards, apiUrl, headers) {
+    try {
+      const card = cardItem.card || cardItem;
+      const cardId = card.id || cardItem.card_id || cardItem.id;
+      const cardName = card.name || cardItem.name || `Card ${cardId}`;
+
+      console.log(
+        `Processing card ${
+          index + 1
+        }/${totalCards}: ID=${cardId}, Name="${cardName}"`
+      );
+
+      if (!cardId) {
+        console.log("No card ID found, skipping...");
+        return null;
+      }
+
+      let cardData = null;
+      let retryCount = 0;
+      const maxRetries = 2;
+
+      while (retryCount < maxRetries && !cardData) {
+        try {
+          const cardQueryResponse = await axios.post(
+            `${apiUrl}/card/${cardId}/query`,
+            {},
+            {
+              headers: headers,
+              timeout: 60000,
+            }
+          );
+
+          console.log(
+            `Card ${cardId} query successful on attempt ${retryCount + 1}`
+          );
+
+          if (cardQueryResponse.data && cardQueryResponse.data.data) {
+            console.log(
+              `Card ${cardId} data rows:`,
+              cardQueryResponse.data.data.rows?.length || 0
+            );
+
+            cardData = {
+              title: cardName,
+              data: cardQueryResponse.data,
+              id: cardId,
+              display: card.display || "scalar",
+              description: card.description || "",
+              fetchedAt: new Date().toISOString(),
+            };
+          } else {
+            console.warn(`Card ${cardId} returned invalid data structure`);
+          }
+        } catch (cardError) {
+          retryCount++;
+          console.error(
+            `Card ${cardId} attempt ${retryCount} failed:`,
+            cardError.message
+          );
+
+          if (retryCount < maxRetries) {
+            const delay = Math.pow(2, retryCount) * 1000;
+            console.log(`Retrying card ${cardId} in ${delay}ms...`);
+            await new Promise((resolve) => setTimeout(resolve, delay));
+          }
+        }
+      }
+
+      if (cardData) {
+        return cardData;
+      } else {
+        console.error(
+          `Failed to fetch card ${cardId} after ${maxRetries} attempts`
+        );
+        return null;
+      }
+    } catch (error) {
+      console.error(
+        `Error processing card ${cardItem.card?.id || cardItem.id}:`,
+        error.message
+      );
+      return null;
+    }
+  },
+
+  // Helper method: Process multiple cards with worker pool
+  async _processCardsInBatches(
+    cardsToProcess,
+    apiUrl,
+    headers,
+    concurrentLimit = 5
+  ) {
+    const cardsData = [];
+    const totalCards = cardsToProcess.length;
+    let index = 0; // Shared index counter
+
+    // Create worker that continuously processes cards from the queue
+    const worker = async (workerId) => {
+      const results = [];
+      while (index < totalCards) {
+        const currentIndex = index++;
+        const cardItem = cardsToProcess[currentIndex];
+
+        console.log(
+          `Worker ${workerId} processing card ${currentIndex + 1}/${totalCards}`
+        );
+
+        const result = await this._fetchSingleCard(
+          cardItem,
+          currentIndex,
+          totalCards,
+          apiUrl,
+          headers
+        );
+
+        if (result) {
+          results.push(result);
+        }
+      }
+      return results;
+    };
+
+    // Create multiple workers (Array(limit).fill(0).map(worker) pattern)
+    const workers = Array(concurrentLimit)
+      .fill(0)
+      .map((_, i) => worker(i + 1));
+
+    // Run all workers concurrently and collect results
+    const allResults = await Promise.all(workers);
+
+    // Flatten results from all workers
+    allResults.forEach((workerResults) => {
+      workerResults.forEach((result) => {
+        if (result) {
+          cardsData.push(result);
+        }
+      });
+    });
+
+    return cardsData;
+  },
+
   async getDashboardData() {
     try {
       console.log("Checking Metabase configuration...");
@@ -71,97 +214,13 @@ const metabaseClient = {
         console.log("Total cards found:", cardsToProcess.length);
 
         if (cardsToProcess.length > 0) {
-          const cardsData = [];
-
-          for (let i = 0; i < cardsToProcess.length; i++) {
-            const cardItem = cardsToProcess[i];
-            try {
-              const card = cardItem.card || cardItem;
-              const cardId = card.id || cardItem.card_id || cardItem.id;
-              const cardName = card.name || cardItem.name || `Card ${cardId}`;
-
-              console.log(
-                `Processing card ${i + 1}/${
-                  cardsToProcess.length
-                }: ID=${cardId}, Name="${cardName}"`
-              );
-
-              if (!cardId) {
-                console.log("No card ID found, skipping...");
-                continue;
-              }
-
-              let cardData = null;
-              let retryCount = 0;
-              const maxRetries = 2;
-
-              while (retryCount < maxRetries && !cardData) {
-                try {
-                  const cardQueryResponse = await axios.post(
-                    `${apiUrl}/card/${cardId}/query`,
-                    {},
-                    {
-                      headers: headers,
-                      timeout: 60000,
-                    }
-                  );
-
-                  console.log(
-                    `Card ${cardId} query successful on attempt ${
-                      retryCount + 1
-                    }`
-                  );
-
-                  if (cardQueryResponse.data && cardQueryResponse.data.data) {
-                    console.log(
-                      `Card ${cardId} data rows:`,
-                      cardQueryResponse.data.data.rows?.length || 0
-                    );
-
-                    cardData = {
-                      title: cardName,
-                      data: cardQueryResponse.data,
-                      id: cardId,
-                      display: card.display || "scalar",
-                      description: card.description || "",
-                      fetchedAt: new Date().toISOString(),
-                    };
-                  } else {
-                    console.warn(
-                      `Card ${cardId} returned invalid data structure`
-                    );
-                  }
-                } catch (cardError) {
-                  retryCount++;
-                  console.error(
-                    `Card ${cardId} attempt ${retryCount} failed:`,
-                    cardError.message
-                  );
-
-                  if (retryCount < maxRetries) {
-                    const delay = Math.pow(2, retryCount) * 1000;
-                    console.log(`Retrying card ${cardId} in ${delay}ms...`);
-                    await new Promise((resolve) => setTimeout(resolve, delay));
-                  }
-                }
-              }
-
-              if (cardData) {
-                cardsData.push(cardData);
-              } else {
-                console.error(
-                  `Failed to fetch card ${cardId} after ${maxRetries} attempts`
-                );
-              }
-
-              await new Promise((resolve) => setTimeout(resolve, 200));
-            } catch (error) {
-              console.error(
-                `Error processing card ${cardItem.card?.id || cardItem.id}:`,
-                error.message
-              );
-            }
-          }
+          // Process cards concurrently using helper method
+          const cardsData = await this._processCardsInBatches(
+            cardsToProcess,
+            apiUrl,
+            headers,
+            5
+          );
 
           console.log(
             `Successfully fetched ${cardsData.length} out of ${cardsToProcess.length} cards`
