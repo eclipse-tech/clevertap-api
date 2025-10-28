@@ -2,14 +2,18 @@
   "version": 2,
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
       "source": "/(.*)",
-      "destination": "/api"
+      "destination": "/api/$1"
     }
   ],
   "crons": [
     {
       "path": "/api/daily-report-generator",
-      "schedule": "0 0 * * *"
+      "schedule": "35 9 * * *"
     }
   ]
 }
